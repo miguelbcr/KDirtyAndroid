@@ -18,13 +18,13 @@ buildscript {
 }
 
 android {
-  compileSdkVersion 25
-  buildToolsVersion "25.0.2"
+  compileSdkVersion 26
+  buildToolsVersion "26.0.1"
 
   defaultConfig {
     applicationId "org.base_app_android"
     minSdkVersion 16
-    targetSdkVersion 25
+    targetSdkVersion 26
     versionCode 1
     versionName "1.0"
 
@@ -93,7 +93,7 @@ android {
 
 ext {
   versions = [
-          support           : "25.2.0",
+          support           : "25.3.1",
           retrofit          : "2.2.0",
           dagger            : "2.9",
           mockery           : "1.0.2",
