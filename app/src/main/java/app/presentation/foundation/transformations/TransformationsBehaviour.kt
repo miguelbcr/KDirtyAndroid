@@ -30,23 +30,12 @@ class TransformationsBehaviour @Inject constructor(private val exceptionFormatte
                                           private val dialogs: Dialogs,
                                           private @Named("mainThread") val mainThread: Scheduler,
                                           private @Named("backgroundThread") val backgroundThread: Scheduler) : Transformations {
-    /**
-     * Set the associated lifecycle to RxLifecycle be able to handle the single subscriptions, for
-     * both Fragments and Activities.
-     */
-    override lateinit var lifecycle: SingleTransformer<*, *>
 
-    /**
-     * Bind the subscription single to the [Transformations.lifecycle] supplied. Prepare
-     * the single to use an io thread for subscription and to observe on the UI thread only after
-     * the stream of data has reached this point.
-     */
     @Suppress("UNCHECKED_CAST")
     override fun <T> safely(): SingleTransformer<T, T> =
             SingleTransformer {
                 it.subscribeOn(backgroundThread)
                         .observeOn(mainThread)
-                        .compose<T>(lifecycle as SingleTransformer<in T, out T>?)
                         .onErrorResumeNext {
                             when (it) {
                                 is CancellationException -> Single.never<T>()

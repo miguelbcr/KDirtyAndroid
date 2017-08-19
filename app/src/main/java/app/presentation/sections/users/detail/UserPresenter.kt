@@ -16,29 +16,34 @@
 
 package app.presentation.sections.users.detail
 
+import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.OnLifecycleEvent
+import app.data.foundation.extemsions.addTo
 import app.data.sections.users.User
-import app.presentation.foundation.presenter.Presenter
-import app.presentation.foundation.presenter.ViewPresenter
-import app.presentation.foundation.transformations.Transformations
-import app.presentation.foundation.widgets.Notifications
+import app.presentation.foundation.views.BasePresenter
+import app.presentation.foundation.views.ViewPresenter
 import app.presentation.sections.users.UsersWireframe
 import io.reactivex.functions.Consumer
 import javax.inject.Inject
 
-class UserPresenter @Inject constructor(transformations: Transformations, private val wireframe: UsersWireframe,
-                                                 notifications: Notifications) : Presenter<UserPresenter.View>(transformations, notifications) {
+class UserPresenter @Inject constructor(
+    private val wireframe: UsersWireframe) : BasePresenter<UserPresenter.View>() {
 
-    override fun onBindView(view: View) {
-        super.onBindView(view)
+  @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+  fun onCreate() {
+    view.initViews()
 
-        wireframe.userScreen
-                .compose(transformations.safely())
-                .compose(transformations.loading())
-                .compose(transformations.reportOnSnackBar())
-                .subscribe(Consumer { view.showUser(it) })
-    }
+    wireframe.userScreen
+        .compose(transformations.safely())
+        .compose(transformations.loading())
+        .compose(transformations.reportOnSnackBar())
+        .subscribe(Consumer { view.showUser(it) })
+        .addTo(disposables)
+  }
 
-    interface View : ViewPresenter {
-        fun showUser(user: User)
-    }
+  interface View : ViewPresenter {
+
+    fun initViews()
+    fun showUser(user: User)
+  }
 }

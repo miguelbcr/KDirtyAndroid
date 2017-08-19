@@ -64,8 +64,8 @@ class UsersTest {
     @Test fun _3_Verify_Search_User() {
         onView(withId(R.id.drawerLayout)).perform(openDrawer())
 
-        onView(Matchers.allOf(withId(R.id.navigationView),
-                hasDescendant(withText(R.string.find_user)))).perform(click())
+      onView(Matchers.allOf<View>(withId(R.id.navigationView),
+          hasDescendant(withText(R.string.find_user)))).perform(click())
 
         onView(withId(R.id.etName)).perform(click(), replaceText(USERNAME), closeSoftKeyboard())
         onView(withId(R.id.btFindUser)).perform(click())

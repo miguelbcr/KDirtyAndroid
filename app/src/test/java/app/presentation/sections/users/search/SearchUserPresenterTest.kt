@@ -35,12 +35,14 @@ class SearchUserPresenterTest {
     lateinit var searchUserPresenterUT: SearchUserPresenter
     
     @Before fun init() {
-        searchUserPresenterUT = SearchUserPresenter(userRepository, transformations, notifications)
+        searchUserPresenterUT = SearchUserPresenter(userRepository).bind(view) as SearchUserPresenter
+      searchUserPresenterUT.transformations = transformations
+      searchUserPresenterUT.notifications = notifications
         whenever(view.clicksSearchUser()).thenReturn(Observable.never())
     }
 
     @Test fun Verify_OnBindView() {
-        searchUserPresenterUT.onBindView(view)
+        searchUserPresenterUT.onCreate()
 
         verify(view).clicksSearchUser()
         verify(view, never()).showUser(any())
@@ -48,16 +50,16 @@ class SearchUserPresenterTest {
 
     @Test fun When_Call_OnBindView_With_User_State_Then_ShowUser_Is_Called() {
         mockSuccessResponse()
-        searchUserPresenterUT.onBindView(view)
+        searchUserPresenterUT.onCreate()
         searchUserPresenterUT.getUserByUserName("noEmpty")
         verify(view).showUser(any())
 
-        searchUserPresenterUT.onBindView(view)
+        searchUserPresenterUT.onCreate()
         verify(view, times(2)).showUser(any())
     }
 
     @Test fun When_Call_GetUserByName_With_Empty_String_Then_ShowError() {
-        searchUserPresenterUT.onBindView(view)
+        searchUserPresenterUT.onCreate()
         searchUserPresenterUT.getUserByUserName("")
 
         verify(userRepository, never()).searchByUserName(any())
@@ -66,7 +68,7 @@ class SearchUserPresenterTest {
 
     @Test fun Verify_GetUserByName_With_Success_Response() {
         mockSuccessResponse()
-        searchUserPresenterUT.onBindView(view)
+        searchUserPresenterUT.onCreate()
         searchUserPresenterUT.getUserByUserName("noEmpty")
 
         verify(notifications, never()).showSnackBar(any<Single<String>>())
@@ -78,7 +80,7 @@ class SearchUserPresenterTest {
 
     @Test fun Verify_GetUserByName_With_Error_Response() {
         mockErrorResponse()
-        searchUserPresenterUT.onBindView(view)
+        searchUserPresenterUT.onCreate()
         searchUserPresenterUT.getUserByUserName("noEmpty")
 
         verify(transformations).safely<Any>()

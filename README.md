@@ -32,8 +32,8 @@ The architecture which conducts this project has been designed with a clear purp
   * *Presenters* use repositories to retrieve/send data and tell the views how they must behave. 
   * *Wireframes* hide the internal details of screen navigation and persist the data required to be passed in the process of navigation between screens. 
   * *Views* are the Fragments and Activities. They are as dummy as possible, and they just implement the contract with the Presenter. They don't even know that a presenter is hold as a reference. This is handled at a level base class. 
-* Lifecycle handling using [RxLifecycle](https://github.com/trello/RxLifecycle).
-* A mechanism to restore screen's data bewteen config changes combining ReactiveCache, RxLifecycle, `Activity#onRetainCustomNonConfigurationInstance` and `Fragment#setRetainInstance(true)`. 
+* Lifecycle handling using [android.arch.lifecycle](https://developer.android.com/topic/libraries/architecture/adding-components.html).
+* A mechanism to restore screen's data bewteen config changes combining ReactiveCache
 * Plenty of unit testing using [Mockito](https://github.com/mockito/mockito).
 * A little of UI testing using [Espresso](https://developer.android.com/training/testing/ui-testing/espresso-testing.html).
 * Static code analysis such as Checkstyle, FindBugs, Lint, and PMD.

@@ -19,6 +19,7 @@ package app.presentation.sections.launch
 import app.presentation.foundation.transformations.Transformations
 import app.presentation.foundation.widgets.Notifications
 import app.presentation.sections.TransformationsMock
+import app.presentation.sections.launch.LaunchPresenter.View
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.spy
 import com.nhaarman.mockito_kotlin.verify
@@ -31,16 +32,16 @@ class LaunchPresenterTest {
     val transformations: Transformations = spy(TransformationsMock())
     lateinit var launchPresenterUT: LaunchPresenter
     val wireframe: LaunchWireframe = mock()
-    val view: LaunchPresenter.View = mock()
+    val view: View = mock()
     val notifications: Notifications = mock()
 
     @Before fun init() {
-        launchPresenterUT = LaunchPresenter(transformations, wireframe, notifications)
+        launchPresenterUT = LaunchPresenter(wireframe).bind(view) as LaunchPresenter
     }
 
     @Test fun Verify_OnBindView() {
         whenever(wireframe.dashboard()).thenReturn(Completable.complete())
-        launchPresenterUT.onBindView(view)
+        launchPresenterUT.onCreate()
 
         verify(wireframe).dashboard()
     }

@@ -35,26 +35,26 @@ class DashboardPresenterTest {
     lateinit var dashboardPresenterUT: DashboardPresenter
 
     @Before fun init() {
-        dashboardPresenterUT = DashboardPresenter(transformations, notifications, fragmentsManager)
+        dashboardPresenterUT = DashboardPresenter(fragmentsManager).bind(view) as DashboardPresenter
         whenever(view.clicksItemSelected()).thenReturn(Observable.never())
     }
 
     @Test fun Verify_OnBindView() {
-        dashboardPresenterUT.onBindView(view)
+        dashboardPresenterUT.onCreate()
 
         verify(view).clicksItemSelected()
         verify(view).replaceFragment(any(), any())
     }
 
     @Test fun Verify_OnBindView_With_Current_Fragment() {
-        dashboardPresenterUT.onBindView(view)
+        dashboardPresenterUT.onCreate()
 
         verify(view).clicksItemSelected()
         verify(view).replaceFragment(any(), any())
     }
 
     @Test fun When_Call_replaceDrawerFragment_And_Current_Fragment_Is_The_Current_One_Then_Do_Not_Replace_It() {
-        dashboardPresenterUT.onBindView(view)
+        dashboardPresenterUT.onCreate()
         whenever(view.replaceFragment(any(), any())).thenReturn(false)
         dashboardPresenterUT.replaceDrawerFragment(R.id.drawer_users)
 
@@ -64,7 +64,7 @@ class DashboardPresenterTest {
     }
 
     @Test fun When_Call_replaceDrawerFragment_And_Current_Fragment_Is_Not_The_Current_One_Then_Replace_It() {
-        dashboardPresenterUT.onBindView(view)
+        dashboardPresenterUT.onCreate()
         whenever(view.replaceFragment(any(), any())).thenReturn(true)
         dashboardPresenterUT.replaceDrawerFragment(R.id.drawer_find_user)
 

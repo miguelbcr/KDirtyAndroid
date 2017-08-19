@@ -16,63 +16,64 @@
 
 package app.presentation.sections.dashboard
 
+import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.OnLifecycleEvent
 import android.support.annotation.IdRes
 import android.support.annotation.StringRes
 import android.support.annotation.VisibleForTesting
 import android.support.v4.app.Fragment
 import android.view.MenuItem
-import app.presentation.foundation.presenter.Presenter
-import app.presentation.foundation.presenter.ViewPresenter
-import app.presentation.foundation.transformations.Transformations
+import app.data.foundation.extemsions.addTo
+import app.presentation.foundation.views.BasePresenter
 import app.presentation.foundation.views.FragmentsManager
-import app.presentation.foundation.widgets.Notifications
+import app.presentation.foundation.views.ViewPresenter
 import app.presentation.sections.users.list.UsersFragment
 import app.presentation.sections.users.search.SearchUserFragment
 import io.reactivex.Observable
 import org.base_app_android.R
 import javax.inject.Inject
 
-class DashboardPresenter @Inject constructor(transformations: Transformations, notifications: Notifications,
-                                                      private val fragmentsManager: FragmentsManager) : Presenter<DashboardPresenter.View>(transformations, notifications) {
+class DashboardPresenter @Inject constructor(
+    private val fragmentsManager: FragmentsManager) : BasePresenter<DashboardPresenter.View>() {
 
-    val ITEMS_MENU = mapOf(
-            R.id.drawer_users to ItemMenu(UsersFragment::class.java, R.string.users),
-            R.id.drawer_find_user to ItemMenu(SearchUserFragment::class.java, R.string.find_user)
-    )
+  private val ITEMS_MENU = mapOf(
+      R.id.drawer_users to ItemMenu(UsersFragment::class.java, R.string.users),
+      R.id.drawer_find_user to ItemMenu(SearchUserFragment::class.java, R.string.find_user)
+  )
 
-    override fun onBindView(view: View) {
-        super.onBindView(view)
+  @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+  fun onCreate() {
+    replaceDrawerFragment(R.id.drawer_users)
 
-        replaceDrawerFragment(R.id.drawer_users)
+    view.initViews()
 
-        view.clicksItemSelected()
-                .subscribe { menuItem ->
-                    replaceDrawerFragment(menuItem.itemId)
-                    view.closeDrawer()
-                }
+    view.clicksItemSelected()
+        .subscribe { menuItem ->
+          replaceDrawerFragment(menuItem.itemId)
+          view.closeDrawer()
+        }.addTo(disposables)
+  }
+
+  @VisibleForTesting
+  fun replaceDrawerFragment(@IdRes idSelectedMenu: Int) {
+    val itemMenu = ITEMS_MENU[idSelectedMenu]
+    val classFragment = itemMenu!!.classFragment
+
+    if (view.replaceFragment(fragmentsManager, classFragment)) {
+      view.setCheckedItemMenu(idSelectedMenu)
+      view.setTitleActionBar(itemMenu.resTitle)
     }
+  }
 
-    @VisibleForTesting fun replaceDrawerFragment(@IdRes idSelectedMenu: Int) {
-        val itemMenu = ITEMS_MENU[idSelectedMenu]
-        val classFragment = itemMenu!!.classFragment
+  interface View : ViewPresenter {
 
-        if (view.replaceFragment(fragmentsManager, classFragment)) {
-            view.setCheckedItemMenu(idSelectedMenu)
-            view.setTitleActionBar(itemMenu.resTitle)
-        }
-    }
+    fun initViews()
+    fun replaceFragment(fragmentsManager: FragmentsManager,
+        classFragment: Class<out Fragment>): Boolean
 
-    interface View : ViewPresenter {
-
-        fun replaceFragment(fragmentsManager: FragmentsManager,
-                            classFragment: Class<out Fragment>): Boolean
-
-        fun clicksItemSelected(): Observable<MenuItem>
-
-        fun setCheckedItemMenu(@IdRes id: Int)
-
-        fun setTitleActionBar(@StringRes id: Int)
-
-        fun closeDrawer()
-    }
+    fun clicksItemSelected(): Observable<MenuItem>
+    fun setCheckedItemMenu(@IdRes id: Int)
+    fun setTitleActionBar(@StringRes id: Int)
+    fun closeDrawer()
+  }
 }

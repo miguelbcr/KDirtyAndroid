@@ -16,81 +16,88 @@
 
 package app.presentation.sections.dashboard
 
+import android.arch.lifecycle.LifecycleRegistry
+import android.arch.lifecycle.LifecycleRegistryOwner
 import android.content.res.Configuration
 import android.os.Bundle
 import android.support.annotation.IdRes
 import android.support.annotation.StringRes
 import android.support.v4.app.Fragment
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
-import app.presentation.foundation.views.BaseActivity
+import app.presentation.foundation.BaseApp
 import app.presentation.foundation.views.FragmentsManager
-import app.presentation.foundation.views.LayoutResActivity
 import com.jakewharton.rxbinding2.support.design.widget.itemSelections
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.dashboard_activity.*
 import kotlinx.android.synthetic.main.toolbar.*
 import org.base_app_android.R
+import javax.inject.Inject
 
-@LayoutResActivity(R.layout.dashboard_activity)
-class DashBoardActivity : BaseActivity<DashboardPresenter.View, DashboardPresenter>(), DashboardPresenter.View {
-    lateinit var drawerToggle: ActionBarDrawerToggle
+class DashBoardActivity : AppCompatActivity(), LifecycleRegistryOwner, DashboardPresenter.View {
+  @Inject lateinit var presenter: DashboardPresenter
+  private val registry = LifecycleRegistry(this)
+  override fun getLifecycle(): LifecycleRegistry = registry
 
-    override fun injectDagger() {
-        getApplicationComponent().inject(this)
+  lateinit var drawerToggle: ActionBarDrawerToggle
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.dashboard_activity)
+    (application as BaseApp).presentationComponent.inject(this)
+    lifecycle.addObserver(presenter.bind(this))
+  }
+
+  override fun initViews() {
+    setSupportActionBar(toolbar)
+    supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+    supportActionBar!!.setHomeButtonEnabled(true)
+
+    drawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.app_name, R.string.app_name)
+    drawerLayout.addDrawerListener(drawerToggle)
+  }
+
+  override fun onDestroy() {
+    drawerLayout.removeDrawerListener(drawerToggle)
+    super.onDestroy()
+  }
+
+  override fun onPostCreate(savedInstanceState: Bundle?) {
+    super.onPostCreate(savedInstanceState)
+    drawerToggle.syncState()
+  }
+
+  override fun onConfigurationChanged(newConfig: Configuration) {
+    super.onConfigurationChanged(newConfig)
+    drawerToggle.onConfigurationChanged(newConfig)
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    if (drawerToggle.onOptionsItemSelected(item)) {
+      return true
+    } else if (item.itemId == android.R.id.home) {
+      onBackPressed()
     }
+    return super.onOptionsItemSelected(item)
+  }
 
-    override fun initViews() {
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setHomeButtonEnabled(true)
+  override fun clicksItemSelected(): Observable<MenuItem> = navigationView.itemSelections()
 
-        drawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.app_name, R.string.app_name)
-        drawerLayout.addDrawerListener(drawerToggle)
-    }
+  override fun setCheckedItemMenu(@IdRes id: Int) {
+    navigationView.setCheckedItem(id)
+  }
 
-    override fun onDestroy() {
-        drawerLayout.removeDrawerListener(drawerToggle)
-        super.onDestroy()
-    }
+  override fun setTitleActionBar(@StringRes id: Int) {
+    if (supportActionBar != null) supportActionBar?.title = getString(id)
+  }
 
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
-        drawerToggle.syncState()
-    }
+  override fun replaceFragment(fragmentsManager: FragmentsManager,
+      classFragment: Class<out Fragment>): Boolean =
+      fragmentsManager.replaceFragment(supportFragmentManager, R.id.fl_fragment, classFragment,
+          false)
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        drawerToggle.onConfigurationChanged(newConfig)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (drawerToggle.onOptionsItemSelected(item)) {
-            return true
-        } else if (item.itemId == android.R.id.home) {
-            onBackPressed()
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    override fun clicksItemSelected(): Observable<MenuItem> {
-        return navigationView.itemSelections()
-    }
-
-    override fun setCheckedItemMenu(@IdRes id: Int) {
-        navigationView.setCheckedItem(id)
-    }
-
-    override fun setTitleActionBar(@StringRes id: Int) {
-        if (supportActionBar != null) supportActionBar?.title = getString(id)
-    }
-
-    override fun replaceFragment(fragmentsManager: FragmentsManager,
-                                 classFragment: Class<out Fragment>): Boolean {
-        return fragmentsManager.replaceFragment(supportFragmentManager, R.id.fl_fragment, classFragment, false)
-    }
-
-    override fun closeDrawer() {
-        drawerLayout.closeDrawers()
-    }
+  override fun closeDrawer() {
+    drawerLayout.closeDrawers()
+  }
 }

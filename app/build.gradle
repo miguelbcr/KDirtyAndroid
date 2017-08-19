@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'android-apt'
@@ -95,12 +96,15 @@ ext {
   versions = [
           support           : "25.3.1",
           retrofit          : "2.2.0",
-          dagger            : "2.9",
+          dagger            : "2.11",
           mockery           : "1.0.2",
           leakCanary        : "1.5",
-          rxbinding         : "2.0.0",
-          rxlifecycle       : "2.0.1"
+          rxbinding         : "2.0.0"
   ]
+}
+
+kapt {
+  generateStubs = true
 }
 
 dependencies {
@@ -108,7 +112,7 @@ dependencies {
 
   //Common
   provided "org.glassfish:javax.annotation:10.0-b28"
-  apt "com.google.dagger:dagger-compiler:${versions.dagger}"
+  kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
   compile "com.google.dagger:dagger:${versions.dagger}"
   compile 'io.reactivex.rxjava2:rxjava:2.0.7'
   debugCompile "com.squareup.leakcanary:leakcanary-android:${versions.leakCanary}"
@@ -124,7 +128,7 @@ dependencies {
   compile 'com.github.VictorAlbertos:ReactiveCache:1.1.0-2.x'
 
   compile "com.github.VictorAlbertos.Mockery:extension_rx2_retrofit:${versions.mockery}"
-  apt "com.github.VictorAlbertos.Mockery:test_compiler:${versions.mockery}"
+  kapt "com.github.VictorAlbertos.Mockery:test_compiler:${versions.mockery}"
   provided "com.github.VictorAlbertos.Mockery:test_runtime:${versions.mockery}"
   provided "junit:junit:4.12"
 
@@ -136,9 +140,10 @@ dependencies {
   compile("com.afollestad.material-dialogs:core:0.9.4.1") {
     transitive = true
   }
-  compile "com.trello.rxlifecycle2:rxlifecycle:${versions.rxlifecycle}"
-  compile "com.trello.rxlifecycle2:rxlifecycle-android:${versions.rxlifecycle}"
-  compile "com.trello.rxlifecycle2:rxlifecycle-components:${versions.rxlifecycle}"
+  //compile "android.arch.lifecycle:runtime:1.0.0-alpha5"
+  kapt "android.arch.lifecycle:compiler:1.0.0-alpha5"
+  compile "android.arch.lifecycle:extensions:1.0.0-alpha5"
+  //annotationProcessor "android.arch.lifecycle:compiler:1.0.0-alpha5"
 
   compile "com.github.miguelbcr:OkAdapters:0.2.1"
   compile "com.jakewharton.rxbinding2:rxbinding-kotlin:${versions.rxbinding}"

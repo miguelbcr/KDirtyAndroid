@@ -34,14 +34,14 @@ class UserPresenterTest {
     lateinit var userPresenterUT: UserPresenter
 
     @Before fun init() {
-        userPresenterUT = UserPresenter(transformations, wireframe,
-                notifications)
+        userPresenterUT = UserPresenter(wireframe).bind(view) as UserPresenter
+      userPresenterUT.transformations = transformations
     }
 
     @Test fun Verify_OnBindView_With_Success_Response() {
         whenever(wireframe.userScreen)
                 .thenReturn(Single.just(User(1, "name", "avatar")))
-        userPresenterUT.onBindView(view)
+        userPresenterUT.onCreate()
 
         verify(transformations).safely<Any>()
         verify(transformations).loading<Any>()
@@ -52,7 +52,7 @@ class UserPresenterTest {
     @Test fun Verify_OnBindView_With_Error_Response() {
         whenever(wireframe.userScreen)
                 .thenReturn(Single.error<User>(RuntimeException()))
-        userPresenterUT.onBindView(view)
+        userPresenterUT.onCreate()
 
         verify(transformations).safely<Any>()
         verify(transformations).loading<Any>()

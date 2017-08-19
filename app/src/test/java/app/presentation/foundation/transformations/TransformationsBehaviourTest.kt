@@ -20,11 +20,9 @@ import app.presentation.foundation.widgets.Dialogs
 import app.presentation.foundation.widgets.Notifications
 import com.nhaarman.mockito_kotlin.*
 import io.reactivex.Single
-import io.reactivex.SingleTransformer
 import io.reactivex.schedulers.Schedulers
 import org.junit.Before
 import org.junit.Test
-import java.util.concurrent.CancellationException
 
 class TransformationsBehaviourTest {
     val FORMATTED_ERROR = "formatted_error"
@@ -40,8 +38,6 @@ class TransformationsBehaviourTest {
 
         transformationsBehaviourUT = TransformationsBehaviour(exceptionFormatter,
                 notifications, dialogs, Schedulers.io(), Schedulers.io())
-
-        transformationsBehaviourUT.lifecycle = SingleTransformer<Any, Any> { it }
     }
 
     @Test fun Verify_Safely_Success() {
@@ -57,20 +53,17 @@ class TransformationsBehaviourTest {
     }
 
     @Test fun Verify_Safely_Error() {
-        transformationsBehaviourUT.lifecycle = SingleTransformer<Any, Any> { Single.error<Any>(RuntimeException()) }
-
         val observer = Single.just(SUCCESS_MESSAGE)
                 .compose(transformationsBehaviourUT.safely<String>())
                 .test()
 
         observer.awaitTerminalEvent()
-        observer.assertError(RuntimeException::class.java)
-                .assertNoValues()
+      observer.assertNoErrors()
+          .assertValueCount(1)
+          .assertValue { it == SUCCESS_MESSAGE }
     }
 
     @Test fun Verify_Safely_CancellationException() {
-        transformationsBehaviourUT.lifecycle = SingleTransformer<Any, Any> { Single.error<Any>(CancellationException()) }
-
         val observer = Single.just(SUCCESS_MESSAGE)
                 .compose(transformationsBehaviourUT.safely<String>())
                 .test()

@@ -33,7 +33,6 @@ public class ApiModule {
   private final Retrofit retrofit;
 
   @Inject public ApiModule() {
-
     this.retrofit = new Retrofit.Builder()
         .baseUrl("https://api.github.com")
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())

@@ -16,20 +16,22 @@
 
 package app.presentation.sections.launch
 
-import app.presentation.foundation.presenter.Presenter
-import app.presentation.foundation.presenter.ViewPresenter
-import app.presentation.foundation.transformations.Transformations
-import app.presentation.foundation.widgets.Notifications
+import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.OnLifecycleEvent
+import app.data.foundation.extemsions.addTo
+import app.presentation.foundation.views.BasePresenter
+import app.presentation.foundation.views.ViewPresenter
 import javax.inject.Inject
 
-class LaunchPresenter @Inject constructor(transformations: Transformations,
-                                                   private val wireframe: LaunchWireframe,
-                                                   notifications: Notifications) : Presenter<LaunchPresenter.View>(transformations, notifications) {
+class LaunchPresenter @Inject constructor(
+    private val wireframe: LaunchWireframe) : BasePresenter<LaunchPresenter.View>() {
 
-    override fun onBindView(view: LaunchPresenter.View) {
-        super.onBindView(view)
-        wireframe.dashboard().subscribe()
-    }
+  @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+  fun onCreate() {
+    wireframe.dashboard()
+        .subscribe()
+        .addTo(disposables)
+  }
 
-    interface View : ViewPresenter
+  interface View : ViewPresenter
 }

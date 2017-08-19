@@ -135,9 +135,9 @@ dependencies {
   compile("com.afollestad.material-dialogs:core:0.9.4.1") {
     transitive = true
   }
-  compile "com.trello.rxlifecycle2:rxlifecycle:${versions.rxlifecycle}"
-  compile "com.trello.rxlifecycle2:rxlifecycle-android:${versions.rxlifecycle}"
-  compile "com.trello.rxlifecycle2:rxlifecycle-components:${versions.rxlifecycle}"
+  //compile "android.arch.lifecycle:runtime:1.0.0-alpha5"
+  compile "android.arch.lifecycle:extensions:1.0.0-alpha5"
+  //annotationProcessor "android.arch.lifecycle:compiler:1.0.0-alpha5"
 
   compile "com.github.miguelbcr:OkAdapters:0.2.1"
   compile "com.jakewharton.rxbinding2:rxbinding-kotlin:${versions.rxbinding}"

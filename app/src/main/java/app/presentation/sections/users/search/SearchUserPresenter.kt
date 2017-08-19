@@ -16,52 +16,57 @@
 
 package app.presentation.sections.users.search
 
+import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.OnLifecycleEvent
 import android.support.annotation.VisibleForTesting
+import app.data.foundation.extemsions.addTo
 import app.data.sections.users.User
 import app.data.sections.users.UserRepository
-import app.presentation.foundation.presenter.Presenter
-import app.presentation.foundation.presenter.ViewPresenter
-import app.presentation.foundation.transformations.Transformations
-import app.presentation.foundation.widgets.Notifications
+import app.presentation.foundation.views.BasePresenter
+import app.presentation.foundation.views.ViewPresenter
 import io.reactivex.Observable
 import org.base_app_android.R
 import javax.inject.Inject
 
-class SearchUserPresenter @Inject constructor(private val userRepository: UserRepository,
-                                              transformations: Transformations,
-                                              notifications: Notifications) : Presenter<SearchUserPresenter.View>(transformations, notifications) {
-    private var userState: User? = null
+class SearchUserPresenter @Inject constructor(
+    private val repository: UserRepository) : BasePresenter<SearchUserPresenter.View>() {
+  private var userState: User? = null
 
-    override fun onBindView(view: View) {
-        super.onBindView(view)
-        if (userState != null) {
-            view.showUser(userState!!)
-        }
+  @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+  fun onCreate() {
+    view.initViews()
 
-        view.clicksSearchUser().subscribe { getUserByUserName(view.username()) }
+    if (userState != null) {
+      view.showUser(userState!!)
     }
 
-    @VisibleForTesting fun getUserByUserName(username: String) {
-        if (username.isEmpty()) {
-            notifications.showSnackBar(R.string.fill_missing_fields)
-            return
-        }
+    view.clicksSearchUser()
+        .subscribe { getUserByUserName(view.username()) }
+        .addTo(disposables)
+  }
 
-        userRepository.searchByUserName(username)
-                .compose(transformations.safely<User>())
-                .compose(transformations.loading<User>())
-                .compose(transformations.reportOnSnackBar<User>())
-                .subscribe { user ->
-                    userState = user
-                    view.showUser(user)
-                }
+  @VisibleForTesting
+  fun getUserByUserName(username: String) {
+    if (username.isEmpty()) {
+      notifications.showSnackBar(R.string.fill_missing_fields)
+      return
     }
 
-    interface View : ViewPresenter {
-        fun showUser(user: User)
+    repository.searchByUserName(username)
+        .compose(transformations.safely<User>())
+        .compose(transformations.loading<User>())
+        .compose(transformations.reportOnSnackBar<User>())
+        .subscribe { user ->
+          userState = user
+          view.showUser(user)
+        }.addTo(disposables)
+  }
 
-        fun clicksSearchUser(): Observable<Unit>
+  interface View : ViewPresenter {
 
-        fun username(): String
-    }
+    fun initViews()
+    fun showUser(user: User)
+    fun clicksSearchUser(): Observable<Unit>
+    fun username(): String
+  }
 }

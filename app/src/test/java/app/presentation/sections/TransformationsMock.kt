@@ -21,8 +21,6 @@ import io.reactivex.Single
 import io.reactivex.SingleTransformer
 
 class TransformationsMock : Transformations {
-    override var lifecycle: SingleTransformer<*, *> = SingleTransformer<Any, Any> { Single.just(it) }
-
     override fun <T> safely(): SingleTransformer<T, T> = SingleTransformer { it }
 
     override fun <T> reportOnSnackBar(): SingleTransformer<T, T> = SingleTransformer {

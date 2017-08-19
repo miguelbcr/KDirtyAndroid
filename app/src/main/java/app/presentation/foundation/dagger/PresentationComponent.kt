@@ -14,29 +14,31 @@
  * limitations under the License.
  */
 
-package app.presentation.foundation.dagger;
+package app.presentation.foundation.dagger
 
-import app.presentation.sections.dashboard.DashBoardActivity;
-import app.presentation.sections.launch.LaunchActivity;
-import app.presentation.sections.users.detail.UserActivity;
-import app.presentation.sections.users.list.UsersFragment;
-import app.presentation.sections.users.search.SearchUserFragment;
-import dagger.Component;
-import javax.inject.Singleton;
+import app.presentation.sections.dashboard.DashBoardActivity
+import app.presentation.sections.launch.LaunchActivity
+import app.presentation.sections.users.detail.UserActivity
+import app.presentation.sections.users.list.UsersFragment
+import app.presentation.sections.users.search.SearchUserFragment
+import dagger.Component
+import javax.inject.Singleton
 
 /**
  * Every fragment or activity which needs to be part of the dependency graph built by Dagger needs
  * to be declared in this component in order to be injected from their respective base classes.
  */
-@Singleton @Component(modules = {PresentationModule.class})
-public interface PresentationComponent {
-  void inject(LaunchActivity launchActivity);
+@Singleton
+@Component(modules = arrayOf(PresentationModule::class))
+interface PresentationComponent {
 
-  void inject(DashBoardActivity dashBoardActivity);
+  fun inject(activity: LaunchActivity)
 
-  void inject(UserActivity userUserActivity);
+  fun inject(activity: DashBoardActivity)
 
-  void inject(UsersFragment usersFragment);
+  fun inject(activity: UserActivity)
 
-  void inject(SearchUserFragment searchUserFragment);
+  fun inject(fragment: UsersFragment)
+
+  fun inject(fragment: SearchUserFragment)
 }

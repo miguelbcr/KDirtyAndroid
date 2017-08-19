@@ -16,11 +16,8 @@
 
 package app.presentation.foundation.views
 
-import android.support.annotation.LayoutRes
-
 /**
- * Set the layout resource for every Activity which extends from [BaseActivity]
+ * Base class for every presenter view. It's required to be able to perform the binding
+ * using generics at base level class.
  */
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
-annotation class LayoutResActivity(@LayoutRes val value: Int)
+interface ViewPresenter

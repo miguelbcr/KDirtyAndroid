@@ -41,28 +41,29 @@ class UsersPresenterTest {
     lateinit var usersPresenterUT: UsersPresenter
 
     @Before fun init() {
-        usersPresenterUT = UsersPresenter(userRepository, wireframe, transformations, notifications)
+        usersPresenterUT = UsersPresenter(userRepository, wireframe).bind(view) as UsersPresenter
+      usersPresenterUT.transformations = transformations
         whenever(view.userSelectedClicks()).thenReturn(Observable.never())
     }
 
     @Test fun When_Call_OnBindView_Then_SetUpLoaderPager_Is_Called() {
-        usersPresenterUT.onBindView(view)
+        usersPresenterUT.onCreate()
         verify(view).setUpLoaderPager(any(), any())
     }
 
     @Test fun When_Call_OnBindView_Then_SetUpRefreshList_Is_Called() {
-        usersPresenterUT.onBindView(view)
+        usersPresenterUT.onCreate()
         verify(view).setUpRefreshList(any())
     }
 
     @Test fun When_Call_OnBindView_Then_UserSelectedClicks_Is_Called() {
-        usersPresenterUT.onBindView(view)
+        usersPresenterUT.onCreate()
         verify(view).userSelectedClicks()
     }
 
     @Test fun When_Call_NextPage_Second_Time_Then_UsersState_Preserve_Users() {
         mockSuccessResponse()
-        usersPresenterUT.onBindView(view)
+        usersPresenterUT.onCreate()
         usersPresenterUT.nextPage(aUser(), callback)
         usersPresenterUT.nextPage(aUser(), callback)
 
@@ -71,7 +72,7 @@ class UsersPresenterTest {
 
     @Test fun When_Call_RefreshList_Then_UsersState_Is_Cleared() {
         mockSuccessResponse()
-        usersPresenterUT.onBindView(view)
+        usersPresenterUT.onCreate()
         usersPresenterUT.nextPage(aUser(), callback)
         usersPresenterUT.nextPage(aUser(), callback)
         usersPresenterUT.refreshList(callback)
@@ -81,7 +82,7 @@ class UsersPresenterTest {
 
     @Test fun When_Call_NextPage_With_Null_User_Then_Id_Is_Null() {
         mockSuccessResponse()
-        usersPresenterUT.onBindView(view)
+        usersPresenterUT.onCreate()
 
         usersPresenterUT.nextPage(null, callback)
         verify(userRepository).getUsers(null, false)
@@ -89,7 +90,7 @@ class UsersPresenterTest {
 
     @Test fun Verify_NextPage_With_Success_Response() {
         mockSuccessResponse()
-        usersPresenterUT.onBindView(view)
+        usersPresenterUT.onCreate()
         usersPresenterUT.nextPage(aUser(), callback)
 
         verify(userRepository).getUsers(USER_ID, false)
@@ -100,7 +101,7 @@ class UsersPresenterTest {
 
     @Test fun Verify_NextPage_With_Error_Response() {
         mockErrorResponse()
-        usersPresenterUT.onBindView(view)
+        usersPresenterUT.onCreate()
         usersPresenterUT.nextPage(aUser(), callback)
 
         verify(userRepository).getUsers(USER_ID, false)
@@ -111,7 +112,7 @@ class UsersPresenterTest {
 
     @Test fun Verify_RefreshList_With_Success_Response() {
         mockSuccessResponse()
-        usersPresenterUT.onBindView(view)
+        usersPresenterUT.onCreate()
         usersPresenterUT.refreshList(callback)
 
         verify(userRepository).getUsers(null, true)
@@ -123,7 +124,7 @@ class UsersPresenterTest {
 
     @Test fun Verify_RefreshList_With_Error_Response() {
         mockErrorResponse()
-        usersPresenterUT.onBindView(view)
+        usersPresenterUT.onCreate()
         usersPresenterUT.refreshList(callback)
 
         verify(userRepository).getUsers(null, true)

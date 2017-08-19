@@ -19,16 +19,10 @@ package app.presentation.foundation.transformations
 import io.reactivex.SingleTransformer
 
 interface Transformations {
-    /**
-     * Set the associated lifecycle to RxLifecycle be able to handle the single subscriptions, for
-     * both Fragments and Activities.
-     */
-    var lifecycle : SingleTransformer<*, *>
 
     /**
-     * Bind the subscription single to the [Transformations.lifecycle] supplied. Prepare
-     * the single to use an io thread for subscription and to observe on the UI thread only after
-     * the stream of data has reached this point.
+     * Prepare the single to use an io thread for subscription and to observe on the UI thread
+     * only after the stream of data has reached this point.
      */
     fun <T> safely(): SingleTransformer<T, T>
 

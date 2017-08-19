@@ -37,7 +37,7 @@ class UserViewGroup : FrameLayout, OkRecyclerViewAdapter.Binder<User> {
     }
 
     override fun bind(user: User, position: Int, count: Int) {
-        val message = "${user.id.toString()} ${user.login}"
+        val message = "${user.id} ${user.login}"
         tvName.text = message
 
         if (user.avatar_url == null || user.avatar_url.isEmpty()) return
