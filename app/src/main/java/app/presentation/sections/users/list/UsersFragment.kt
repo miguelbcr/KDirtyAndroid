@@ -19,13 +19,13 @@ package app.presentation.sections.users.list
 import android.arch.lifecycle.LifecycleRegistry
 import android.arch.lifecycle.LifecycleRegistryOwner
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import app.data.sections.users.User
 import app.presentation.foundation.BaseApp
+import app.presentation.foundation.views.BaseFragment
 import app.presentation.sections.users.UserViewGroup
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -33,10 +33,10 @@ import kotlinx.android.synthetic.main.users_fragment.*
 import miguelbcr.ok_adapters.recycler_view.OkRecyclerViewAdapter
 import miguelbcr.ok_adapters.recycler_view.Pager
 import org.base_app_android.R
-import javax.inject.Inject
 
-class UsersFragment : Fragment(), LifecycleRegistryOwner, UsersPresenter.View {
-  @Inject lateinit var presenter: UsersPresenter
+
+
+class UsersFragment : BaseFragment<UsersPresenter.View, UsersPresenter>(), LifecycleRegistryOwner, UsersPresenter.View {
   private lateinit var adapter: OkRecyclerViewAdapter<User, UserViewGroup>
   private var positionRecyclerState: Int = 0
   private val registry = LifecycleRegistry(this)
@@ -44,14 +44,19 @@ class UsersFragment : Fragment(), LifecycleRegistryOwner, UsersPresenter.View {
 
   override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
       savedInstanceState: Bundle?): View? {
-    val view = inflater?.inflate(R.layout.users_fragment, container, false)
-    (activity.application as BaseApp).presentationComponent.inject(this)
-    return view
+    return inflater?.inflate(R.layout.users_fragment, container, false)
   }
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)
+    (activity.application as BaseApp).presentationComponent.inject(this)
     lifecycle.addObserver(presenter.bind(this))
+  }
+
+  override fun onDestroyView() {
+    positionRecyclerState = (rvUsers.layoutManager as GridLayoutManager)
+        .findFirstCompletelyVisibleItemPosition()
+    super.onDestroyView()
   }
 
   override fun initViews() {
@@ -89,10 +94,8 @@ class UsersFragment : Fragment(), LifecycleRegistryOwner, UsersPresenter.View {
     swipeRefreshUsers.isRefreshing = false
   }
 
-  override fun onDestroyView() {
-    positionRecyclerState = (rvUsers.layoutManager as GridLayoutManager)
-        .findFirstCompletelyVisibleItemPosition()
-    super.onDestroyView()
+  override fun showNewUser(user: User) {
+    adapter.all.add(0, user)
+    adapter.notifyDataSetChanged()
   }
-
 }

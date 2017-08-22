@@ -18,12 +18,17 @@ package app.presentation.foundation
 
 import android.app.Activity
 import android.app.Application
+import app.data.foundation.fcm.FcmMessageReceiver
+import app.data.foundation.fcm.FcmTokenReceiver
 import app.presentation.foundation.dagger.DaggerPresentationComponent
 import app.presentation.foundation.dagger.PresentationComponent
 import app.presentation.foundation.dagger.PresentationModule
+import app.presentation.foundation.fcm.FcmReceiverBackground
 import app.presentation.foundation.widgets.Notifications
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
+import rx_fcm.internal.RxFcm
+
 
 /**
  * Custom Application
@@ -52,11 +57,17 @@ class BaseApp : Application() {
     super.onCreate()
     setupLeakCanary()
     AppCare.registerActivityLifeCycle(this)
+    initFcm()
   }
 
   private fun setupLeakCanary(): RefWatcher {
     return if (LeakCanary.isInAnalyzerProcess(this)) {
       RefWatcher.DISABLED
     } else LeakCanary.install(this)
+  }
+
+  private fun initFcm() {
+    RxFcm.Notifications.init(this, FcmMessageReceiver(), FcmReceiverBackground())
+    RxFcm.Notifications.onRefreshToken(FcmTokenReceiver())
   }
 }

@@ -94,7 +94,7 @@ android {
 
 ext {
   versions = [
-          support           : "25.3.1",
+          support           : "26.0.1",
           retrofit          : "2.2.0",
           dagger            : "2.11",
           mockery           : "1.0.2",
@@ -108,7 +108,7 @@ kapt {
 }
 
 dependencies {
-  compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
   //Common
   provided "org.glassfish:javax.annotation:10.0-b28"
@@ -122,10 +122,13 @@ dependencies {
   //Data layer
   compile "com.squareup.retrofit2:retrofit:${versions.retrofit}"
   compile "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"
-
   compile "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
+
   compile 'com.github.VictorAlbertos.Jolyglot:gson:0.0.3'
   compile 'com.github.VictorAlbertos:ReactiveCache:1.1.0-2.x'
+
+  compile 'com.google.firebase:firebase-core:11.0.4'
+  compile 'com.github.VictorAlbertos:RxFcm:0.1.0-2.x'
 
   compile "com.github.VictorAlbertos.Mockery:extension_rx2_retrofit:${versions.mockery}"
   kapt "com.github.VictorAlbertos.Mockery:test_compiler:${versions.mockery}"
@@ -169,9 +172,9 @@ dependencies {
 
 configurations.all {
   resolutionStrategy.force "com.android.support:support-annotations:${versions.support}"
+  resolutionStrategy.force "com.android.support:appcompat-v7:${versions.support}"
   resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.1'
 }
 
-repositories {
-  mavenCentral()
-}
+// Works if you put this line at the bottom of this file, nor at the top
+apply plugin: 'com.google.gms.google-services'

@@ -20,6 +20,7 @@ import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.OnLifecycleEvent
 import android.support.annotation.VisibleForTesting
 import app.data.foundation.extemsions.addTo
+import app.data.foundation.fcm.FcmMessageReceiver
 import app.data.sections.users.User
 import app.data.sections.users.UserRepository
 import app.presentation.foundation.views.BasePresenter
@@ -27,18 +28,20 @@ import app.presentation.foundation.views.ViewPresenter
 import app.presentation.sections.users.UsersWireframe
 import io.reactivex.Observable
 import miguelbcr.ok_adapters.recycler_view.Pager
+import rx_fcm.Message
 import javax.inject.Inject
+
 
 class UsersPresenter @Inject constructor(private val repository: UserRepository,
     private val wireframe: UsersWireframe) : BasePresenter<UsersPresenter.View>() {
   @VisibleForTesting
-  val usersState: MutableList<User> = mutableListOf()
+  val users: MutableList<User> = mutableListOf()
 
   @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
   fun onCreate() {
     view.initViews()
 
-    view.setUpLoaderPager(usersState, Pager.LoaderPager { lastUser ->
+    view.setUpLoaderPager(users, Pager.LoaderPager { lastUser ->
       Pager.Call<User> { nextPage(lastUser, it) }
     })
 
@@ -57,7 +60,7 @@ class UsersPresenter @Inject constructor(private val repository: UserRepository,
         .compose(transformations.reportOnSnackBar<List<User>>())
         .subscribe { users ->
           callback.supply(users)
-          usersState.addAll(users)
+          this.users.addAll(users)
         }.addTo(disposables)
   }
 
@@ -68,11 +71,23 @@ class UsersPresenter @Inject constructor(private val repository: UserRepository,
         .compose(transformations.reportOnSnackBar<List<User>>())
         .subscribe { users ->
           callback.supply(users)
-          usersState.clear()
-          usersState.addAll(users)
+          this.users.clear()
+          this.users.addAll(users)
           view.hideLoadingOnRefreshList()
         }.addTo(disposables)
   }
+
+  override fun onTargetNotification(oMessage: Observable<Message>) {
+    repository.getRecentUser()
+        .compose(transformations.safely<Any>())
+        .compose(transformations.reportOnSnackBar())
+        .subscribe { user ->
+          users.add(0, user as User)
+          view.showNewUser(user)
+        }
+  }
+
+  override fun matchesTarget(key: String) = FcmMessageReceiver.USERS_FCM == key
 
   interface View : ViewPresenter {
 
@@ -81,5 +96,6 @@ class UsersPresenter @Inject constructor(private val repository: UserRepository,
     fun setUpRefreshList(call: Pager.Call<User>)
     fun userSelectedClicks(): Observable<User>
     fun hideLoadingOnRefreshList()
+    fun showNewUser(user: User)
   }
 }

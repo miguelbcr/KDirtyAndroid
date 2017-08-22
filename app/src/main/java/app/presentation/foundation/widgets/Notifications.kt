@@ -22,6 +22,7 @@ import android.support.design.widget.Snackbar
 import android.widget.Toast
 import app.presentation.foundation.BaseApp
 import io.reactivex.Single
+import rx_fcm.Message
 import javax.inject.Inject
 
 class Notifications @Inject constructor(private val baseApp: BaseApp) {
@@ -64,4 +65,16 @@ class Notifications @Inject constructor(private val baseApp: BaseApp) {
                     baseApp.getString(idString), Snackbar.LENGTH_LONG).show()
         }
     }
+
+  /**
+   * For output toast messages received in fcm push notifications from the presentation layer.
+   */
+  fun showFcmNotification(oMessage: Single<Message>) {
+    val oNotification = oMessage
+        .map<String> { message ->
+          message.payload().getString("title") + System.getProperty("line.separator") + message.payload().getString("body")
+        }
+
+    showToast(oNotification)
+  }
 }

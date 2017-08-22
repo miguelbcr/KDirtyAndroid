@@ -24,6 +24,7 @@ import android.support.annotation.VisibleForTesting
 import android.support.v4.app.Fragment
 import android.view.MenuItem
 import app.data.foundation.extemsions.addTo
+import app.data.sections.users.UserRepository
 import app.presentation.foundation.views.BasePresenter
 import app.presentation.foundation.views.FragmentsManager
 import app.presentation.foundation.views.ViewPresenter
@@ -34,7 +35,8 @@ import org.base_app_android.R
 import javax.inject.Inject
 
 class DashboardPresenter @Inject constructor(
-    private val fragmentsManager: FragmentsManager) : BasePresenter<DashboardPresenter.View>() {
+    private val fragmentsManager: FragmentsManager,
+    private val userRepository: UserRepository) : BasePresenter<DashboardPresenter.View>() {
 
   private val ITEMS_MENU = mapOf(
       R.id.drawer_users to ItemMenu(UsersFragment::class.java, R.string.users),
@@ -49,8 +51,12 @@ class DashboardPresenter @Inject constructor(
 
     view.clicksItemSelected()
         .subscribe { menuItem ->
-          replaceDrawerFragment(menuItem.itemId)
-          view.closeDrawer()
+          if (menuItem.itemId == R.id.drawer_mock_user) {
+            userRepository.mockAFcmNotification().subscribe()
+          } else {
+            replaceDrawerFragment(menuItem.itemId)
+            view.closeDrawer()
+          }
         }.addTo(disposables)
   }
 

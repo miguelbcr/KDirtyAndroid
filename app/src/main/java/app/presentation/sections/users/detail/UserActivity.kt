@@ -19,20 +19,17 @@ package app.presentation.sections.users.detail
 import android.arch.lifecycle.LifecycleRegistry
 import android.arch.lifecycle.LifecycleRegistryOwner
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import app.data.sections.users.User
 import app.presentation.foundation.BaseApp
+import app.presentation.foundation.views.BaseActivity
 import kotlinx.android.synthetic.main.toolbar.*
 import kotlinx.android.synthetic.main.user_activity.*
 import org.base_app_android.R
-import javax.inject.Inject
 
-class UserActivity : AppCompatActivity(), LifecycleRegistryOwner, UserPresenter.View {
-  @Inject lateinit var presenter: UserPresenter
+class UserActivity : BaseActivity<UserPresenter.View, UserPresenter>(), LifecycleRegistryOwner, UserPresenter.View {
   private val registry = LifecycleRegistry(this)
   override fun getLifecycle(): LifecycleRegistry = registry
-
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

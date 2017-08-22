@@ -26,6 +26,7 @@ The architecture which conducts this project has been designed with a clear purp
 * [Retrofit](https://github.com/square/retrofit) for making HTTP calls.
 * [Mockery](https://github.com/VictorAlbertos/Mockery) to mocking and auto-testing retrofit HTTP calls. 
 * [ReactiveCache](https://github.com/VictorAlbertos/ReactiveCache) to caching the data retrieved from HTTP calls.
+* [RxFcm](https://github.com/VictorAlbertos/RxFcm) to update the cached data using push notifications.
 * A centralized pipeline for handling error using `Observable.Transformer` and `Presenter`.
 * Repositories, presenters, wireframes and views. 
   * *Repositories* get/post data to/from cloud (Server) and local (ReactiveCache) datasources. 

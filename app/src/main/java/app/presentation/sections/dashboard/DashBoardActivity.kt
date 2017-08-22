@@ -24,22 +24,19 @@ import android.support.annotation.IdRes
 import android.support.annotation.StringRes
 import android.support.v4.app.Fragment
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import app.presentation.foundation.BaseApp
+import app.presentation.foundation.views.BaseActivity
 import app.presentation.foundation.views.FragmentsManager
 import com.jakewharton.rxbinding2.support.design.widget.itemSelections
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.dashboard_activity.*
 import kotlinx.android.synthetic.main.toolbar.*
 import org.base_app_android.R
-import javax.inject.Inject
 
-class DashBoardActivity : AppCompatActivity(), LifecycleRegistryOwner, DashboardPresenter.View {
-  @Inject lateinit var presenter: DashboardPresenter
+class DashBoardActivity : BaseActivity<DashboardPresenter.View, DashboardPresenter>(), LifecycleRegistryOwner, DashboardPresenter.View {
   private val registry = LifecycleRegistry(this)
   override fun getLifecycle(): LifecycleRegistry = registry
-
   lateinit var drawerToggle: ActionBarDrawerToggle
 
   override fun onCreate(savedInstanceState: Bundle?) {

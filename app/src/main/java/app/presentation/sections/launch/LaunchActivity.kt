@@ -19,12 +19,10 @@ package app.presentation.sections.launch
 import android.arch.lifecycle.LifecycleRegistry
 import android.arch.lifecycle.LifecycleRegistryOwner
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import app.presentation.foundation.BaseApp
-import javax.inject.Inject
+import app.presentation.foundation.views.BaseActivity
 
-class LaunchActivity : AppCompatActivity(), LifecycleRegistryOwner, LaunchPresenter.View {
-  @Inject lateinit var presenter : LaunchPresenter
+class LaunchActivity : BaseActivity<LaunchPresenter.View, LaunchPresenter>(), LifecycleRegistryOwner, LaunchPresenter.View {
   private val registry = LifecycleRegistry(this)
   override fun getLifecycle(): LifecycleRegistry = registry
 

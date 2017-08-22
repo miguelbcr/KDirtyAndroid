@@ -16,6 +16,8 @@
 
 package app.presentation.foundation.dagger
 
+import app.data.foundation.fcm.FcmMessageReceiver
+import app.data.foundation.fcm.FcmTokenReceiver
 import app.presentation.sections.dashboard.DashBoardActivity
 import app.presentation.sections.launch.LaunchActivity
 import app.presentation.sections.users.detail.UserActivity
@@ -24,6 +26,8 @@ import app.presentation.sections.users.search.SearchUserFragment
 import dagger.Component
 import javax.inject.Singleton
 
+
+
 /**
  * Every fragment or activity which needs to be part of the dependency graph built by Dagger needs
  * to be declared in this component in order to be injected from their respective base classes.
@@ -31,6 +35,10 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = arrayOf(PresentationModule::class))
 interface PresentationComponent {
+
+  fun inject(fcmTokenReceiver: FcmTokenReceiver)
+
+  fun inject(fcmMessageReceiver: FcmMessageReceiver)
 
   fun inject(activity: LaunchActivity)
 

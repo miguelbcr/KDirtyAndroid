@@ -67,7 +67,7 @@ class UsersPresenterTest {
         usersPresenterUT.nextPage(aUser(), callback)
         usersPresenterUT.nextPage(aUser(), callback)
 
-        assertEquals(usersPresenterUT.usersState.size, 2)
+        assertEquals(usersPresenterUT.users.size, 2)
     }
 
     @Test fun When_Call_RefreshList_Then_UsersState_Is_Cleared() {
@@ -77,7 +77,7 @@ class UsersPresenterTest {
         usersPresenterUT.nextPage(aUser(), callback)
         usersPresenterUT.refreshList(callback)
 
-        assertEquals(usersPresenterUT.usersState.size, 1)
+        assertEquals(usersPresenterUT.users.size, 1)
     }
 
     @Test fun When_Call_NextPage_With_Null_User_Then_Id_Is_Null() {
@@ -119,7 +119,7 @@ class UsersPresenterTest {
         verify(transformations).safely<List<User>>()
         verify(transformations).reportOnSnackBar<List<User>>()
         verify(callback).supply(any())
-        assertEquals(usersPresenterUT.usersState.size, 1)
+        assertEquals(usersPresenterUT.users.size, 1)
     }
 
     @Test fun Verify_RefreshList_With_Error_Response() {
