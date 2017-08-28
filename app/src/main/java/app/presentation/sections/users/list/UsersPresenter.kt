@@ -19,6 +19,7 @@ package app.presentation.sections.users.list
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.OnLifecycleEvent
 import android.support.annotation.VisibleForTesting
+import android.view.View
 import app.data.foundation.extemsions.addTo
 import app.data.foundation.fcm.FcmMessageReceiver
 import app.data.sections.users.User
@@ -48,7 +49,7 @@ class UsersPresenter @Inject constructor(private val repository: UserRepository,
     view.setUpRefreshList(Pager.Call { this.refreshList(it) })
 
     view.userSelectedClicks()
-        .flatMap { user -> wireframe.userScreen(user).toObservable<Any>() }
+        .flatMap { (user, view) -> wireframe.userScreen(user, view).toObservable<Any>() }
         .subscribe()
         .addTo(disposables)
   }
@@ -94,7 +95,7 @@ class UsersPresenter @Inject constructor(private val repository: UserRepository,
     fun initViews()
     fun setUpLoaderPager(initialLoad: List<User>, loaderPager: Pager.LoaderPager<User>)
     fun setUpRefreshList(call: Pager.Call<User>)
-    fun userSelectedClicks(): Observable<User>
+    fun userSelectedClicks(): Observable<Pair<User, android.view.View>>
     fun hideLoadingOnRefreshList()
     fun showNewUser(user: User)
   }

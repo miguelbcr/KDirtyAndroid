@@ -19,6 +19,7 @@ package app.presentation.sections.users.list
 import android.arch.lifecycle.LifecycleRegistry
 import android.arch.lifecycle.LifecycleRegistryOwner
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -29,6 +30,7 @@ import app.presentation.foundation.views.BaseFragment
 import app.presentation.sections.users.UserViewGroup
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
+import kotlinx.android.synthetic.main.user_view_group.view.*
 import kotlinx.android.synthetic.main.users_fragment.*
 import miguelbcr.ok_adapters.recycler_view.OkRecyclerViewAdapter
 import miguelbcr.ok_adapters.recycler_view.Pager
@@ -51,6 +53,7 @@ class UsersFragment : BaseFragment<UsersPresenter.View, UsersPresenter>(), Lifec
     super.onActivityCreated(savedInstanceState)
     (activity.application as BaseApp).presentationComponent.inject(this)
     lifecycle.addObserver(presenter.bind(this))
+    //ActivityCompat.setExitSharedElementCallback(activity, ExitTransitionCallback)
   }
 
   override fun onDestroyView() {
@@ -84,9 +87,9 @@ class UsersFragment : BaseFragment<UsersPresenter.View, UsersPresenter>(), Lifec
     swipeRefreshUsers.setOnRefreshListener { adapter.resetPager(call) }
   }
 
-  override fun userSelectedClicks(): Observable<User> {
-    val clicks = PublishSubject.create<User>()
-    adapter.setOnItemClickListener { user, _, _ -> clicks.onNext(user) }
+  override fun userSelectedClicks(): Observable<Pair<User,View>> {
+    val clicks = PublishSubject.create<Pair<User,View>>()
+    adapter.setOnItemClickListener { user, view, _ -> clicks.onNext(Pair(user, view.ivAvatar)) }
     return clicks
   }
 

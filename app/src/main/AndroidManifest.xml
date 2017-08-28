@@ -23,10 +23,12 @@
     </activity>
 
     <activity
-        android:name="app.presentation.sections.dashboard.DashBoardActivity" />
+        android:name="app.presentation.sections.dashboard.DashBoardActivity"
+        android:theme="@style/ActivityTransitionTheme"  />
 
     <activity
-        android:name="app.presentation.sections.users.detail.UserActivity" />
+        android:name="app.presentation.sections.users.detail.UserActivity"
+        android:theme="@style/ActivityTransitionTheme" />
 
   </application>
 

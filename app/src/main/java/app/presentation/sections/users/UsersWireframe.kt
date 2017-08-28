@@ -17,6 +17,9 @@
 package app.presentation.sections.users
 
 import android.content.Intent
+import android.os.Build
+import android.support.v4.app.ActivityOptionsCompat
+import android.view.View
 import app.data.foundation.WireframeRepository
 import app.data.sections.users.User
 import app.presentation.foundation.BaseApp
@@ -28,12 +31,18 @@ import javax.inject.Inject
 class UsersWireframe @Inject constructor(private val baseApp: BaseApp,
                                          private val wireframeRepository: WireframeRepository) {
 
-    fun userScreen(user: User): Completable {
+    fun userScreen(user: User, view: View): Completable {
+        val intent = Intent(baseApp, UserActivity::class.java)
+
         return wireframeRepository
                 .put(UserActivity::class.java.name, user)
                 .doOnComplete {
-                    baseApp.liveActivity!!
-                            .startActivity(Intent(baseApp, UserActivity::class.java))
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(baseApp.liveActivity, view, view.transitionName)
+                        baseApp.liveActivity!!.startActivity(intent, options.toBundle())
+                    } else {
+                        baseApp.liveActivity!!.startActivity(intent)
+                    }
                 }
     }
 

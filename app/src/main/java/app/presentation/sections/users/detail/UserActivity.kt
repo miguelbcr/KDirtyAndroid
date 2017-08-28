@@ -19,6 +19,7 @@ package app.presentation.sections.users.detail
 import android.arch.lifecycle.LifecycleRegistry
 import android.arch.lifecycle.LifecycleRegistryOwner
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.view.MenuItem
 import app.data.sections.users.User
 import app.presentation.foundation.BaseApp
