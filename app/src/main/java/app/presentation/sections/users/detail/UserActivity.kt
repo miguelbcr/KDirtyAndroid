@@ -16,10 +16,7 @@
 
 package app.presentation.sections.users.detail
 
-import android.arch.lifecycle.LifecycleRegistry
-import android.arch.lifecycle.LifecycleRegistryOwner
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
 import android.view.MenuItem
 import app.data.sections.users.User
 import app.presentation.foundation.BaseApp
@@ -28,30 +25,28 @@ import kotlinx.android.synthetic.main.toolbar.*
 import kotlinx.android.synthetic.main.user_activity.*
 import org.base_app_android.R
 
-class UserActivity : BaseActivity<UserPresenter.View, UserPresenter>(), LifecycleRegistryOwner, UserPresenter.View {
-  private val registry = LifecycleRegistry(this)
-  override fun getLifecycle(): LifecycleRegistry = registry
+class UserActivity : BaseActivity<UserPresenter.View, UserPresenter>(), UserPresenter.View {
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.user_activity)
-    (application as BaseApp).presentationComponent.inject(this)
-    lifecycle.addObserver(presenter.bind(this))
-  }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.user_activity)
+        (application as BaseApp).presentationComponent.inject(this)
+        lifecycle.addObserver(presenter.bind(this))
+    }
 
-  override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    if (item.itemId == android.R.id.home) onBackPressed()
-    return super.onOptionsItemSelected(item)
-  }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) onBackPressed()
+        return super.onOptionsItemSelected(item)
+    }
 
-  override fun initViews() {
-    setSupportActionBar(toolbar)
-    supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-    supportActionBar!!.title = getString(R.string.user)
-  }
+    override fun initViews() {
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.title = getString(R.string.user)
+    }
 
-  override fun showUser(user: User) {
-    userViewGroup.bind(user, 0, 0)
-  }
+    override fun showUser(user: User) {
+        userViewGroup.bind(user, 0, 0)
+    }
 
 }

@@ -16,8 +16,6 @@
 
 package app.presentation.sections.users.search
 
-import android.arch.lifecycle.LifecycleRegistry
-import android.arch.lifecycle.LifecycleRegistryOwner
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,30 +28,28 @@ import io.reactivex.Observable
 import kotlinx.android.synthetic.main.user_search_fragment.*
 import org.base_app_android.R
 
-class SearchUserFragment : BaseFragment<SearchUserPresenter.View, SearchUserPresenter>(), LifecycleRegistryOwner, SearchUserPresenter.View {
-  private val registry = LifecycleRegistry(this)
-  override fun getLifecycle(): LifecycleRegistry = registry
+class SearchUserFragment : BaseFragment<SearchUserPresenter.View, SearchUserPresenter>(), SearchUserPresenter.View {
 
-  override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-      savedInstanceState: Bundle?): View? {
-    return inflater?.inflate(R.layout.user_search_fragment, container, false)
-  }
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        return inflater?.inflate(R.layout.user_search_fragment, container, false)
+    }
 
-  override fun onActivityCreated(savedInstanceState: Bundle?) {
-    super.onActivityCreated(savedInstanceState)
-    (activity.application as BaseApp).presentationComponent.inject(this)
-    lifecycle.addObserver(presenter.bind(this))
-  }
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        (activity.application as BaseApp).presentationComponent.inject(this)
+        lifecycle.addObserver(presenter.bind(this))
+    }
 
-  override fun initViews() {
-  }
+    override fun initViews() {
+    }
 
-  override fun clicksSearchUser(): Observable<Unit> = btFindUser.clicks()
+    override fun clicksSearchUser(): Observable<Unit> = btFindUser.clicks()
 
-  override fun username(): String = etName.text.toString()
+    override fun username(): String = etName.text.toString()
 
-  override fun showUser(user: User) {
-    userViewGroup.visibility = View.VISIBLE
-    userViewGroup.bind(user, 0, 0)
-  }
+    override fun showUser(user: User) {
+        userViewGroup.visibility = View.VISIBLE
+        userViewGroup.bind(user, 0, 0)
+    }
 }

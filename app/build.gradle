@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'android-apt'
 apply from: '../code_quality_tools/quality.gradle'
 apply from: '../fresh_start/fresh_start.gradle'
 
@@ -13,14 +12,12 @@ buildscript {
   }
 
   dependencies {
-    classpath "com.neenbedankt.gradle.plugins:android-apt:1.8"
   }
-
 }
 
 android {
   compileSdkVersion 26
-  buildToolsVersion "26.0.1"
+  buildToolsVersion '26.0.2'
 
   defaultConfig {
     applicationId "org.base_app_android"
@@ -67,19 +64,23 @@ android {
     exclude 'META-INF/services/javax.annotation.processing.Processor'
   }
 
+  flavorDimensions "type"
+
   productFlavors {
     prod {
+      dimension "type"
     }
     mock {
+      dimension "type"
       applicationIdSuffix = ".mock"
     }
   }
 
   // Remove mockRelease as it's not needed.
   android.variantFilter { variant ->
-    if (variant.buildType.name.equals('release')
+    if (variant.buildType.name == 'release'
             && variant.getFlavors().get(0).name.equals('mock')) {
-      variant.setIgnore(true);
+      variant.setIgnore(true)
     }
   }
 
@@ -94,11 +95,11 @@ android {
 
 ext {
   versions = [
-          support           : "26.0.1",
+          support           : "26.1.0",
           retrofit          : "2.2.0",
           dagger            : "2.11",
           mockery           : "1.0.2",
-          leakCanary        : "1.5",
+          leakCanary        : "1.5.1",
           rxbinding         : "2.0.0"
   ]
 }
@@ -108,58 +109,61 @@ kapt {
 }
 
 dependencies {
-  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
   //Common
-  provided "org.glassfish:javax.annotation:10.0-b28"
+  compileOnly "org.glassfish:javax.annotation:10.0-b28"
   kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
-  compile "com.google.dagger:dagger:${versions.dagger}"
-  compile 'io.reactivex.rxjava2:rxjava:2.0.7'
+  api "com.google.dagger:dagger:${versions.dagger}"
+  api 'io.reactivex.rxjava2:rxjava:2.1.1'
   debugCompile "com.squareup.leakcanary:leakcanary-android:${versions.leakCanary}"
   releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:${versions.leakCanary}"
-  compile 'com.jakewharton.timber:timber:4.5.1'
+  api 'com.jakewharton.timber:timber:4.5.1'
 
   //Data layer
-  compile "com.squareup.retrofit2:retrofit:${versions.retrofit}"
-  compile "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"
-  compile "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
+  api "com.squareup.retrofit2:retrofit:${versions.retrofit}"
+  api "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"
+  api "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
 
-  compile 'com.github.VictorAlbertos.Jolyglot:gson:0.0.3'
-  compile 'com.github.VictorAlbertos:ReactiveCache:1.1.0-2.x'
+  api 'com.github.VictorAlbertos.Jolyglot:gson:0.0.3'
+  api 'com.github.VictorAlbertos:ReactiveCache:1.1.1-2.x'
 
-  compile 'com.google.firebase:firebase-core:11.0.4'
-  compile 'com.github.VictorAlbertos:RxFcm:0.1.0-2.x'
+  api 'com.google.firebase:firebase-core:11.4.2'
+  api 'com.google.firebase:firebase-messaging:11.4.2'
+  api 'com.github.VictorAlbertos:RxFcm:0.1.0-2.x'
 
-  compile "com.github.VictorAlbertos.Mockery:extension_rx2_retrofit:${versions.mockery}"
+  api "com.github.VictorAlbertos.Mockery:extension_rx2_retrofit:${versions.mockery}"
   kapt "com.github.VictorAlbertos.Mockery:test_compiler:${versions.mockery}"
-  provided "com.github.VictorAlbertos.Mockery:test_runtime:${versions.mockery}"
-  provided "junit:junit:4.12"
+  compileOnly "com.github.VictorAlbertos.Mockery:test_runtime:${versions.mockery}"
+  compileOnly "junit:junit:4.12"
 
   //Presentation layer
-  compile "com.android.support:appcompat-v7:${versions.support}"
-  compile "com.android.support:design:${versions.support}"
-  compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-  compile 'com.squareup.picasso:picasso:2.5.2'
-  compile("com.afollestad.material-dialogs:core:0.9.4.1") {
+  api "com.android.support:appcompat-v7:${versions.support}"
+  //api "com.android.support:support-v13:${versions.support}"
+  //api "com.android.support:animated-vector-drawable:${versions.support}"
+  api "com.android.support:design:${versions.support}"
+  api 'io.reactivex.rxjava2:rxandroid:2.0.1'
+  api 'com.squareup.picasso:picasso:2.5.2'
+  api("com.afollestad.material-dialogs:core:0.9.4.1") {
     transitive = true
   }
-  //compile "android.arch.lifecycle:runtime:1.0.0-alpha5"
-  kapt "android.arch.lifecycle:compiler:1.0.0-alpha5"
-  compile "android.arch.lifecycle:extensions:1.0.0-alpha5"
+  //api "android.arch.lifecycle:runtime:1.0.0-alpha5"
+  kapt "android.arch.lifecycle:compiler:1.0.0-rc1"
+  api "android.arch.lifecycle:extensions:1.0.0-rc1"
   //annotationProcessor "android.arch.lifecycle:compiler:1.0.0-alpha5"
 
-  compile "com.github.miguelbcr:OkAdapters:0.2.1"
-  compile "com.jakewharton.rxbinding2:rxbinding-kotlin:${versions.rxbinding}"
-  compile "com.jakewharton.rxbinding2:rxbinding-design-kotlin:${versions.rxbinding}"
+  api "com.github.miguelbcr:OkAdapters:0.2.1"
+  api "com.jakewharton.rxbinding2:rxbinding-kotlin:${versions.rxbinding}"
+  api "com.jakewharton.rxbinding2:rxbinding-design-kotlin:${versions.rxbinding}"
 
   //Testing
   testCompile 'junit:junit:4.12'
   testCompile "com.squareup.leakcanary:leakcanary-android-no-op:${versions.leakCanary}"
-  testCompile "com.nhaarman:mockito-kotlin:1.3.0"
+  testCompile "com.nhaarman:mockito-kotlin:1.5.0"
 
   androidTestCompile 'com.github.VictorAlbertos:DeviceAnimationTestRule:0.0.2'
-  androidTestCompile "com.android.support.test:runner:0.5"
-  androidTestCompile "com.android.support.test:rules:0.5"
+  androidTestCompile "com.android.support.test:runner:1.0.1"
+  androidTestCompile "com.android.support.test:rules:1.0.1"
   androidTestCompile("com.android.support.test.espresso:espresso-contrib:2.2.2") {
     exclude module: 'support-annotations'
     exclude module: 'support-v4'
@@ -173,7 +177,10 @@ dependencies {
 configurations.all {
   resolutionStrategy.force "com.android.support:support-annotations:${versions.support}"
   resolutionStrategy.force "com.android.support:appcompat-v7:${versions.support}"
+  resolutionStrategy.force "com.android.support:support-v13:${versions.support}"
+  resolutionStrategy.force "com.android.support:animated-vector-drawable:${versions.support}"
   resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.1'
+  //resolutionStrategy.force "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 }
 
 // Works if you put this line at the bottom of this file, nor at the top

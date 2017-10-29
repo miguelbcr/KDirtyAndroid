@@ -16,10 +16,7 @@
 
 package app.presentation.sections.users.list
 
-import android.arch.lifecycle.LifecycleRegistry
-import android.arch.lifecycle.LifecycleRegistryOwner
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
 import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -37,68 +34,65 @@ import miguelbcr.ok_adapters.recycler_view.Pager
 import org.base_app_android.R
 
 
+class UsersFragment : BaseFragment<UsersPresenter.View, UsersPresenter>(), UsersPresenter.View {
+    private lateinit var adapter: OkRecyclerViewAdapter<User, UserViewGroup>
+    private var positionRecyclerState: Int = 0
 
-class UsersFragment : BaseFragment<UsersPresenter.View, UsersPresenter>(), LifecycleRegistryOwner, UsersPresenter.View {
-  private lateinit var adapter: OkRecyclerViewAdapter<User, UserViewGroup>
-  private var positionRecyclerState: Int = 0
-  private val registry = LifecycleRegistry(this)
-  override fun getLifecycle(): LifecycleRegistry = registry
-
-  override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-      savedInstanceState: Bundle?): View? {
-    return inflater?.inflate(R.layout.users_fragment, container, false)
-  }
-
-  override fun onActivityCreated(savedInstanceState: Bundle?) {
-    super.onActivityCreated(savedInstanceState)
-    (activity.application as BaseApp).presentationComponent.inject(this)
-    lifecycle.addObserver(presenter.bind(this))
-    //ActivityCompat.setExitSharedElementCallback(activity, ExitTransitionCallback)
-  }
-
-  override fun onDestroyView() {
-    positionRecyclerState = (rvUsers.layoutManager as GridLayoutManager)
-        .findFirstCompletelyVisibleItemPosition()
-    super.onDestroyView()
-  }
-
-  override fun initViews() {
-    adapter = object : OkRecyclerViewAdapter<User, UserViewGroup>() {
-      override fun onCreateItemView(parent: ViewGroup, viewType: Int): UserViewGroup {
-        return UserViewGroup(activity)
-      }
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        return inflater?.inflate(R.layout.users_fragment, container, false)
     }
 
-    val layoutManager = GridLayoutManager(activity, 2)
-    adapter.configureGridLayoutManagerForPagination(layoutManager)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        (activity.application as BaseApp).presentationComponent.inject(this)
+        lifecycle.addObserver(presenter.bind(this))
+        //ActivityCompat.setExitSharedElementCallback(activity, ExitTransitionCallback)
+    }
 
-    rvUsers.layoutManager = layoutManager
-    rvUsers.adapter = adapter
+    override fun onDestroyView() {
+        positionRecyclerState = (rvUsers.layoutManager as GridLayoutManager)
+                .findFirstCompletelyVisibleItemPosition()
+        super.onDestroyView()
+    }
 
-    layoutManager.scrollToPosition(positionRecyclerState)
-  }
+    override fun initViews() {
+        adapter = object : OkRecyclerViewAdapter<User, UserViewGroup>() {
+            override fun onCreateItemView(parent: ViewGroup, viewType: Int): UserViewGroup {
+                return UserViewGroup(activity)
+            }
+        }
 
-  override fun setUpLoaderPager(initialLoad: List<User>,
-      loaderPager: Pager.LoaderPager<User>) {
-    adapter.setPager(R.layout.srv_progress, initialLoad, loaderPager)
-  }
+        val layoutManager = GridLayoutManager(activity, 2)
+        adapter.configureGridLayoutManagerForPagination(layoutManager)
 
-  override fun setUpRefreshList(call: Pager.Call<User>) {
-    swipeRefreshUsers.setOnRefreshListener { adapter.resetPager(call) }
-  }
+        rvUsers.layoutManager = layoutManager
+        rvUsers.adapter = adapter
 
-  override fun userSelectedClicks(): Observable<Pair<User,View>> {
-    val clicks = PublishSubject.create<Pair<User,View>>()
-    adapter.setOnItemClickListener { user, view, _ -> clicks.onNext(Pair(user, view.ivAvatar)) }
-    return clicks
-  }
+        layoutManager.scrollToPosition(positionRecyclerState)
+    }
 
-  override fun hideLoadingOnRefreshList() {
-    swipeRefreshUsers.isRefreshing = false
-  }
+    override fun setUpLoaderPager(initialLoad: List<User>,
+                                  loaderPager: Pager.LoaderPager<User>) {
+        adapter.setPager(R.layout.srv_progress, initialLoad, loaderPager)
+    }
 
-  override fun showNewUser(user: User) {
-    adapter.all.add(0, user)
-    adapter.notifyDataSetChanged()
-  }
+    override fun setUpRefreshList(call: Pager.Call<User>) {
+        swipeRefreshUsers.setOnRefreshListener { adapter.resetPager(call) }
+    }
+
+    override fun userSelectedClicks(): Observable<Pair<User, View>> {
+        val clicks = PublishSubject.create<Pair<User, View>>()
+        adapter.setOnItemClickListener { user, view, _ -> clicks.onNext(Pair(user, view.ivAvatar)) }
+        return clicks
+    }
+
+    override fun hideLoadingOnRefreshList() {
+        swipeRefreshUsers.isRefreshing = false
+    }
+
+    override fun showNewUser(user: User) {
+        adapter.all.add(0, user)
+        adapter.notifyDataSetChanged()
+    }
 }

@@ -16,19 +16,15 @@
 
 package app.presentation.sections.launch
 
-import android.arch.lifecycle.LifecycleRegistry
-import android.arch.lifecycle.LifecycleRegistryOwner
 import android.os.Bundle
 import app.presentation.foundation.BaseApp
 import app.presentation.foundation.views.BaseActivity
 
-class LaunchActivity : BaseActivity<LaunchPresenter.View, LaunchPresenter>(), LifecycleRegistryOwner, LaunchPresenter.View {
-  private val registry = LifecycleRegistry(this)
-  override fun getLifecycle(): LifecycleRegistry = registry
+class LaunchActivity : BaseActivity<LaunchPresenter.View, LaunchPresenter>(), LaunchPresenter.View {
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    (application as BaseApp).presentationComponent.inject(this)
-    lifecycle.addObserver(presenter.bind(this))
-  }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        (application as BaseApp).presentationComponent.inject(this)
+        lifecycle.addObserver(presenter.bind(this))
+    }
 }
