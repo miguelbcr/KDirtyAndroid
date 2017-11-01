@@ -19,9 +19,11 @@ package app.sections.users
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.*
 import android.support.test.espresso.assertion.ViewAssertions.matches
+import android.support.test.espresso.contrib.NavigationViewActions
 import android.support.test.espresso.contrib.RecyclerViewActions
 import android.support.test.espresso.matcher.BoundedMatcher
-import android.support.test.espresso.matcher.ViewMatchers.*
+import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
+import android.support.test.espresso.matcher.ViewMatchers.withId
 import android.support.test.rule.ActivityTestRule
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -32,7 +34,6 @@ import io.victoralbertos.device_animation_test_rule.DeviceAnimationTestRule
 import org.base_app_android.R
 import org.hamcrest.Description
 import org.hamcrest.Matcher
-import org.hamcrest.Matchers
 import org.junit.ClassRule
 import org.junit.FixMethodOrder
 import org.junit.Rule
@@ -41,31 +42,37 @@ import org.junit.runners.MethodSorters
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class UsersTest {
-    @Rule @JvmField var mActivityRule = ActivityTestRule(LaunchActivity::class.java)
+    @Rule
+    @JvmField
+    var mActivityRule = ActivityTestRule(LaunchActivity::class.java)
 
     companion object {
-        @ClassRule @JvmField var deviceAnimationTestRule = DeviceAnimationTestRule()
+        @ClassRule
+        @JvmField
+        var deviceAnimationTestRule = DeviceAnimationTestRule()
     }
 
     private val USERNAME = "FuckBoilerplate"
 
-    @Test fun _1_Verify_Get_Users() {
+    @Test
+    fun _1_Verify_Get_Users() {
         onView(withId(R.id.rvUsers))
                 .perform(RecyclerViewActions.scrollToPosition<RecyclerView.ViewHolder>(10))
     }
 
-    @Test fun _2_Verify_Get_User() {
+    @Test
+    fun _2_Verify_Get_User() {
         onView(withId(R.id.rvUsers))
                 .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(8, click()))
 
         onView(withId(R.id.tvName)).check(matches(isNotEmpty))
     }
 
-    @Test fun _3_Verify_Search_User() {
+    @Test
+    fun _3_Verify_Search_User() {
         onView(withId(R.id.drawerLayout)).perform(openDrawer())
-
-      onView(Matchers.allOf<View>(withId(R.id.navigationView),
-          hasDescendant(withText(R.string.find_user)))).perform(click())
+        onView(withId(R.id.navigationView)).check(matches(isDisplayed()))
+        onView(withId(R.id.navigationView)).perform(NavigationViewActions.navigateTo(R.id.drawer_find_user))
 
         onView(withId(R.id.etName)).perform(click(), replaceText(USERNAME), closeSoftKeyboard())
         onView(withId(R.id.btFindUser)).perform(click())

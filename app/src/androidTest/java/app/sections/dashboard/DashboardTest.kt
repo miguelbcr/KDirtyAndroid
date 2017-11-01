@@ -17,45 +17,46 @@
 package app.sections.dashboard
 
 import android.support.test.espresso.Espresso.onView
-import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.assertion.ViewAssertions.matches
-import android.support.test.espresso.matcher.ViewMatchers
-import android.support.test.espresso.matcher.ViewMatchers.*
+import android.support.test.espresso.contrib.NavigationViewActions
+import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
+import android.support.test.espresso.matcher.ViewMatchers.withId
 import android.support.test.rule.ActivityTestRule
-import android.view.View
 import app.common.closeDrawer
 import app.common.openDrawer
 import app.presentation.sections.launch.LaunchActivity
 import io.victoralbertos.device_animation_test_rule.DeviceAnimationTestRule
 import org.base_app_android.R
-import org.hamcrest.Matchers.allOf
 import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
 
 class DashboardTest {
     companion object {
-        @ClassRule @JvmField var deviceAnimationTestRule = DeviceAnimationTestRule()
+        @ClassRule
+        @JvmField
+        var deviceAnimationTestRule = DeviceAnimationTestRule()
     }
 
-    @Rule @JvmField var mActivityRule = ActivityTestRule(LaunchActivity::class.java)
+    @Rule
+    @JvmField
+    var mActivityRule = ActivityTestRule(LaunchActivity::class.java)
 
-    @Test fun _1_Verify_Open_And_Close_Users() {
+    @Test
+    fun _1_Verify_Open_And_Close_Users() {
         onView(withId(R.id.drawerLayout)).perform(openDrawer())
-
         onView(withId(R.id.navigationView)).check(matches(isDisplayed()))
-
-        onView(allOf<View>(withId(R.id.navigationView),
-                ViewMatchers.hasDescendant(withText(R.string.users)))).perform(click())
+        onView(withId(R.id.navigationView)).perform(NavigationViewActions.navigateTo(R.id.drawer_users))
 
         onView(withId(R.id.drawerLayout)).perform(closeDrawer())
     }
 
-    @Test fun _2_Verify_Open_And_Close_Search_User() {
+    @Test
+    fun _2_Verify_Open_And_Close_Search_User() {
         onView(withId(R.id.drawerLayout)).perform(openDrawer())
+        onView(withId(R.id.navigationView)).check(matches(isDisplayed()))
 
-        onView(allOf<View>(withId(R.id.navigationView),
-                ViewMatchers.hasDescendant(withText(R.string.find_user)))).perform(click())
+        onView(withId(R.id.navigationView)).perform(NavigationViewActions.navigateTo(R.id.drawer_find_user))
 
         onView(withId(R.id.drawerLayout)).perform(closeDrawer())
     }
