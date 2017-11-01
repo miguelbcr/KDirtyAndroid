@@ -16,17 +16,15 @@
 
 package app.data.sections.users
 
+import com.google.common.truth.Truth.assertThat
 import io.victoralbertos.mockery.api.built_in_mockery.DTOArgs
-import org.hamcrest.CoreMatchers.not
-import org.hamcrest.CoreMatchers.notNullValue
-import org.hamcrest.MatcherAssert
-import org.hamcrest.core.Is.`is`
+
 
 class UserDTO : DTOArgs.Behaviour<User> {
     override fun validate(candidate: User) {
-        MatcherAssert.assertThat(candidate, notNullValue())
-        MatcherAssert.assertThat(candidate.id, `is`<Int>(not(0)))
-        MatcherAssert.assertThat(candidate.login.isEmpty(), `is`(not(true)))
+        assertThat(candidate).isNotNull()
+        assertThat(candidate.id).isNotEqualTo(0)
+        assertThat(candidate.login).isNotEmpty()
     }
 
     override fun legal(args: Array<out Any>): User {
@@ -38,12 +36,12 @@ class UserDTO : DTOArgs.Behaviour<User> {
 
 class UsersDTO : DTOArgs.Behaviour<List<User>> {
     override fun validate(candidate: List<User>) {
-        MatcherAssert.assertThat(candidate, notNullValue())
-        MatcherAssert.assertThat(candidate.isEmpty(), `is`(not(true)))
+        assertThat(candidate).isNotNull()
+        assertThat(candidate).isNotEmpty()
 
         val (id, login) = candidate[0]
-        MatcherAssert.assertThat(id, `is`(not(0)))
-        MatcherAssert.assertThat(login.isEmpty(), `is`(not(true)))
+        assertThat(id).isNotEqualTo(0)
+        assertThat(login).isNotEmpty()
     }
 
     override fun legal(args: Array<out Any>): List<User> {

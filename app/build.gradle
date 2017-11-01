@@ -79,7 +79,7 @@ android {
   // Remove mockRelease as it's not needed.
   android.variantFilter { variant ->
     if (variant.buildType.name == 'release'
-            && variant.getFlavors().get(0).name.equals('mock')) {
+            && variant.getFlavors().get(0).name == 'mock') {
       variant.setIgnore(true)
     }
   }
@@ -100,7 +100,8 @@ ext {
           dagger            : "2.11",
           mockery           : "1.0.2",
           leakCanary        : "1.5.1",
-          rxbinding         : "2.0.0"
+          rxbinding         : "2.0.0",
+          espresso          : "3.0.1"
   ]
 }
 
@@ -136,6 +137,7 @@ dependencies {
   kapt "com.github.VictorAlbertos.Mockery:test_compiler:${versions.mockery}"
   compileOnly "com.github.VictorAlbertos.Mockery:test_runtime:${versions.mockery}"
   compileOnly "junit:junit:4.12"
+  compileOnly 'com.google.truth:truth:0.36'
 
   //Presentation layer
   api "com.android.support:appcompat-v7:${versions.support}"
@@ -156,22 +158,22 @@ dependencies {
   api "com.jakewharton.rxbinding2:rxbinding-kotlin:${versions.rxbinding}"
   api "com.jakewharton.rxbinding2:rxbinding-design-kotlin:${versions.rxbinding}"
 
+
   //Testing
   testCompile 'junit:junit:4.12'
   testCompile "com.squareup.leakcanary:leakcanary-android-no-op:${versions.leakCanary}"
   testCompile "com.nhaarman:mockito-kotlin:1.5.0"
+  testCompile 'com.google.truth:truth:0.36'
 
-  androidTestCompile 'com.github.VictorAlbertos:DeviceAnimationTestRule:0.0.2'
+  androidTestCompile('com.github.VictorAlbertos:DeviceAnimationTestRule:0.0.2') {
+    exclude group: 'com.android.support.test'
+  }
   androidTestCompile "com.android.support.test:runner:1.0.1"
   androidTestCompile "com.android.support.test:rules:1.0.1"
-  androidTestCompile("com.android.support.test.espresso:espresso-contrib:2.2.2") {
-    exclude module: 'support-annotations'
-    exclude module: 'support-v4'
-    exclude module: 'support-v13'
-    exclude module: 'recyclerview-v7'
-    exclude module: 'appcompat-v7'
-    exclude module: 'design'
-  }
+
+  androidTestCompile "com.android.support.test.espresso:espresso-contrib:${versions.espresso}"
+  //androidTestCompile "com.android.support.test.espresso:espresso-idling-resource:{versions.espresso}"
+  //androidTestCompile "com.android.support.test.espresso:espresso-intents:{versions.espresso}"
 }
 
 configurations.all {

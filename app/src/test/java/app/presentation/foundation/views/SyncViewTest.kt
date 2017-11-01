@@ -16,11 +16,10 @@
 
 package app.presentation.foundation.views
 
-import org.hamcrest.core.Is.`is`
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
+import com.google.common.truth.Truth.assertThat
+
 
 class SyncViewTest {
   private lateinit var syncViewUT: SyncView
@@ -33,14 +32,14 @@ class SyncViewTest {
   @Test
   fun When_No_Added_Screen_Then_Need_To_Sync_Is_False() {
     val needToSync = syncViewUT.needToSync(MatcherMock())
-    assertFalse(needToSync)
+    assertThat(needToSync).isFalse()
   }
 
   @Test
   fun When_Added_Screen_Then_Need_To_Sync_Is_True() {
     syncViewUT.addScreen(KEY_1)
     val needToSync = syncViewUT.needToSync(MatcherMock())
-    assertThat(needToSync, `is`(true))
+    assertThat(needToSync).isTrue()
   }
 
   @Test
@@ -48,10 +47,10 @@ class SyncViewTest {
     syncViewUT.addScreen(KEY_1)
 
     var needToSync = syncViewUT.needToSync(MatcherMock())
-    assertThat(needToSync, `is`(true))
+    assertThat(needToSync).isTrue()
 
     needToSync = syncViewUT.needToSync(MatcherMock())
-    assertThat(needToSync, `is`(false))
+    assertThat(needToSync).isFalse()
   }
 
   @Test
@@ -62,10 +61,10 @@ class SyncViewTest {
     syncViewUT.addScreen(KEY_1)
 
     var needToSync = syncViewUT.needToSync(MatcherMock())
-    assertThat(needToSync, `is`(true))
+    assertThat(needToSync).isTrue()
 
     needToSync = syncViewUT.needToSync(MatcherMock())
-    assertThat(needToSync, `is`(false))
+    assertThat(needToSync).isFalse()
   }
 
   @Test
@@ -78,10 +77,10 @@ class SyncViewTest {
     syncViewUT.addScreen("4")
 
     var needToSync = syncViewUT.needToSync(MatcherMock())
-    assertThat(needToSync, `is`(true))
+    assertThat(needToSync).isTrue()
 
     needToSync = syncViewUT.needToSync(MatcherMock())
-    assertThat(needToSync, `is`(false))
+    assertThat(needToSync).isFalse()
   }
 
   private class MatcherMock : SyncView.Matcher {
