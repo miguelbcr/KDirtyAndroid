@@ -23,12 +23,12 @@ import javax.inject.Inject
 
 class ErrorAdapter @Inject constructor(val jolyglot: JolyglotGenerics) : ErrorResponseAdapter {
     override fun adapt(json: String): String {
-        try {
-            return jolyglot
+        return try {
+            jolyglot
                     .fromJson<ResponseError>(json, ResponseError::class.java)
                     .message
         } catch (error : JsonSyntaxException) {
-            return json
+            json
         }
     }
 }

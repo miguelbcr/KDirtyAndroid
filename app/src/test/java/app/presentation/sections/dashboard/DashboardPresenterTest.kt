@@ -16,6 +16,7 @@
 
 package app.presentation.sections.dashboard
 
+import app.data.sections.users.UserRepository
 import app.presentation.foundation.transformations.Transformations
 import app.presentation.foundation.views.FragmentsManager
 import app.presentation.foundation.widgets.Notifications
@@ -32,10 +33,12 @@ class DashboardPresenterTest {
     val view: DashboardPresenter.View = mock()
     val notifications: Notifications = mock()
     val fragmentsManager: FragmentsManager = mock()
+    val userRepository: UserRepository = mock()
+
     lateinit var dashboardPresenterUT: DashboardPresenter
 
     @Before fun init() {
-        dashboardPresenterUT = DashboardPresenter(fragmentsManager).bind(view) as DashboardPresenter
+        dashboardPresenterUT = DashboardPresenter(fragmentsManager, userRepository).bind(view) as DashboardPresenter
         whenever(view.clicksItemSelected()).thenReturn(Observable.never())
     }
 
