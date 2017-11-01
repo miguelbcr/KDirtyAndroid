@@ -19,8 +19,7 @@ package app.presentation.sections.users.list
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.OnLifecycleEvent
 import android.support.annotation.VisibleForTesting
-import android.view.View
-import app.data.foundation.extemsions.addTo
+import app.data.foundation.extensions.addTo
 import app.data.foundation.fcm.FcmMessageReceiver
 import app.data.sections.users.User
 import app.data.sections.users.UserRepository

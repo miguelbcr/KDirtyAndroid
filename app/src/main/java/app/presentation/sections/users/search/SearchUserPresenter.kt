@@ -19,7 +19,7 @@ package app.presentation.sections.users.search
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.OnLifecycleEvent
 import android.support.annotation.VisibleForTesting
-import app.data.foundation.extemsions.addTo
+import app.data.foundation.extensions.addTo
 import app.data.sections.users.User
 import app.data.sections.users.UserRepository
 import app.presentation.foundation.views.BasePresenter

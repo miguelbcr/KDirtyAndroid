@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.data.foundation.extemsions
+package app.data.foundation.extensions
 
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable

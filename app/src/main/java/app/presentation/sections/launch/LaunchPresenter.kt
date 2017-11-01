@@ -18,7 +18,7 @@ package app.presentation.sections.launch
 
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.OnLifecycleEvent
-import app.data.foundation.extemsions.addTo
+import app.data.foundation.extensions.addTo
 import app.presentation.foundation.views.BasePresenter
 import app.presentation.foundation.views.ViewPresenter
 import javax.inject.Inject

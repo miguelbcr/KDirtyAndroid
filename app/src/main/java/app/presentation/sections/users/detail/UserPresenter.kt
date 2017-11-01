@@ -18,7 +18,7 @@ package app.presentation.sections.users.detail
 
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.OnLifecycleEvent
-import app.data.foundation.extemsions.addTo
+import app.data.foundation.extensions.addTo
 import app.data.sections.users.User
 import app.presentation.foundation.views.BasePresenter
 import app.presentation.foundation.views.ViewPresenter

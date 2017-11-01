@@ -23,7 +23,7 @@ import android.support.annotation.StringRes
 import android.support.annotation.VisibleForTesting
 import android.support.v4.app.Fragment
 import android.view.MenuItem
-import app.data.foundation.extemsions.addTo
+import app.data.foundation.extensions.addTo
 import app.data.sections.users.UserRepository
 import app.presentation.foundation.views.BasePresenter
 import app.presentation.foundation.views.FragmentsManager
