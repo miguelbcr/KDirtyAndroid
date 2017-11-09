@@ -17,11 +17,14 @@
 package app.data.foundation.net
 
 import com.google.gson.JsonSyntaxException
+import io.victoralbertos.jolyglot.GsonSpeaker
 import io.victoralbertos.jolyglot.JolyglotGenerics
 import io.victoralbertos.mockery.api.built_in_interceptor.ErrorResponseAdapter
 import javax.inject.Inject
 
-class ErrorAdapter @Inject constructor(val jolyglot: JolyglotGenerics) : ErrorResponseAdapter {
+class ErrorAdapter @Inject constructor() : ErrorResponseAdapter {
+    val jolyglot: JolyglotGenerics = GsonSpeaker()
+
     override fun adapt(json: String): String {
         return try {
             jolyglot

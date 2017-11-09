@@ -21,7 +21,7 @@ import junit.framework.Assert.assertEquals
 import org.junit.Test
 
 class ErrorAdapterTest {
-    private val errorAdapterUT = ErrorAdapter(GsonSpeaker())
+    private val errorAdapterUT = ErrorAdapter()
 
     @Test fun Verify_Adapt() {
         val json = "{\"message\":\"such a nice error\"}"

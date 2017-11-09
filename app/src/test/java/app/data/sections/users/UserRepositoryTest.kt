@@ -108,7 +108,7 @@ class UserRepositoryTest {
     @Rx2Retrofit(delay = 0, failurePercent = 100, variancePercentage = 0) internal interface ApiFailure : GithubUsersApi
 
     private fun mockApiForSuccess() {
-        val networkResponse = NetworkResponse(ErrorAdapter(GsonSpeaker()))
+        val networkResponse = NetworkResponse(ErrorAdapter())
 
         val githubUsersApi = Mockery.Builder<ApiSuccess>()
                 .mock(ApiSuccess::class.java)
@@ -122,7 +122,7 @@ class UserRepositoryTest {
     }
 
     private fun mockApiForFailure() {
-        val networkResponse = NetworkResponse(ErrorAdapter(GsonSpeaker()))
+        val networkResponse = NetworkResponse(ErrorAdapter())
 
         val githubUsersApi = Mockery.Builder<ApiFailure>()
                 .mock(ApiFailure::class.java)

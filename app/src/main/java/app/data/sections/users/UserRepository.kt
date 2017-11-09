@@ -32,10 +32,10 @@ import javax.inject.Inject
 class UserRepository @Inject constructor(private val githubUsersApi: GithubUsersApi,
                                          private val networkResponse: NetworkResponse,
                                          reactiveCache: ReactiveCache) {
-    private val FIRST_DEFAULT_ID = 0;
+    private val FIRST_DEFAULT_ID = 0
     private val USERS_PER_PAGE = 50
-    private val cacheProvider = reactiveCache.providerGroup<MutableList<User>>()
-            .withKey<ProviderGroup<MutableList<User>>>("users")
+    private val cacheProvider = reactiveCache.providerGroup<List<User>>()
+            .withKey<ProviderGroup<List<User>>>("users")
 
     fun getUsers(lastIdQueried: Int?, refresh: Boolean): Single<List<User>> =
             getUsersReply(lastIdQueried, refresh).map { it.data }
@@ -46,9 +46,9 @@ class UserRepository @Inject constructor(private val githubUsersApi: GithubUsers
             githubUsersApi.getUserByName(username).compose(networkResponse.process())
 
     @VisibleForTesting
-    fun getUsersReply(lastIdQueried: Int?, refresh: Boolean): Single<Reply<MutableList<User>>> {
+    fun getUsersReply(lastIdQueried: Int?, refresh: Boolean): Single<Reply<List<User>>> {
         val id = lastIdQueried ?: FIRST_DEFAULT_ID
-        val apiCall: Single<MutableList<User>> = githubUsersApi
+        val apiCall: Single<List<User>> = githubUsersApi
                 .getUsers(id, USERS_PER_PAGE)
                 .compose(networkResponse.process())
 
@@ -61,7 +61,7 @@ class UserRepository @Inject constructor(private val githubUsersApi: GithubUsers
 
   fun addNewUser(user: User): Single<Unit> {
     return cacheProvider.read(FIRST_DEFAULT_ID)
-        .doOnSuccess { users -> users.add(0, user) }
+        .doOnSuccess { users -> users.toMutableList().add(0, user) }
         .compose(cacheProvider.replace(FIRST_DEFAULT_ID))
         .map({ _ -> Unit })
   }

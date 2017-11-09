@@ -25,7 +25,7 @@ import org.junit.Test
 import retrofit2.Response
 
 class NetworkResponseTest {
-    private val networkResponseUT: NetworkResponse = NetworkResponse(ErrorAdapter(GsonSpeaker()))
+    private val networkResponseUT: NetworkResponse = NetworkResponse(ErrorAdapter())
 
     @Test fun Verify_On_Success() {
         val model = MockModel()

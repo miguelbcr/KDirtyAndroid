@@ -99,7 +99,7 @@ ext {
           retrofit          : "2.2.0",
           dagger            : "2.11",
           mockery           : "1.0.2",
-          leakCanary        : "1.5.1",
+          leakCanary        : "1.5.4",
           rxbinding         : "2.0.0",
           espresso          : "3.0.1"
   ]
